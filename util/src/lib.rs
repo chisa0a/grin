@@ -62,6 +62,8 @@ pub use crate::hex::*;
 pub mod file;
 /// Compress and decompress zip bz2 archives
 pub mod zip;
+/// Fork util
+pub mod fork;
 
 mod rate_counter;
 pub use crate::rate_counter::RateCounter;

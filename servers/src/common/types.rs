@@ -28,7 +28,7 @@ use crate::p2p;
 use crate::pool;
 use crate::pool::types::DandelionConfig;
 use crate::store;
-use crate::util::RwLock;
+use crate::util::{fork, RwLock};
 
 /// Error type wrapping underlying module errors.
 #[derive(Debug)]
@@ -61,6 +61,8 @@ pub enum Error {
 	Configuration(String),
 	/// General error
 	General(String),
+  /// Fork error
+  Fork(fork::Error),
 }
 
 impl From<core::block::Error> for Error {
@@ -118,6 +120,12 @@ impl From<libtx::Error> for Error {
 	fn from(e: libtx::Error) -> Error {
 		Error::LibTx(e)
 	}
+}
+
+impl From<fork::Error> for Error {
+  fn from(e: fork::Error) -> Error {
+    Error::Fork(e)
+  }
 }
 
 /// Type of seeding the server will use to find other peers on the network.

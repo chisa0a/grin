@@ -44,7 +44,7 @@ use crate::p2p;
 use crate::p2p::types::PeerAddr;
 use crate::pool;
 use crate::util::file::get_first_line;
-use crate::util::{Mutex, RwLock, StopState};
+use crate::util::{fork, Mutex, RwLock, StopState};
 
 /// Grin server holding internal structures.
 pub struct Server {
@@ -240,12 +240,16 @@ impl Server {
 		let skip_sync_wait = config.skip_sync_wait.unwrap_or(false);
 		sync_state.update(SyncStatus::AwaitingPeers(!skip_sync_wait));
 
-		sync::run_sync(
-			sync_state.clone(),
-			p2p_server.peers.clone(),
-			shared_chain.clone(),
-			stop_state.clone(),
-		);
+    unsafe {
+      let _sync_pid = fork::fork(|| {
+		    sync::run_sync(
+		    	sync_state.clone(),
+		    	p2p_server.peers.clone(),
+		    	shared_chain.clone(),
+		    	stop_state.clone(),
+		    );
+      })?;
+    }
 
 		let p2p_inner = p2p_server.clone();
 		let _ = thread::Builder::new()
