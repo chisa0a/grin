@@ -18,21 +18,22 @@ use std::io;
 /// Fork errors
 #[derive(Debug)]
 pub enum Error {
-  /// LibC OS Error
-  OS(String),
+	/// LibC OS Error
+	OS(String),
 }
 
 /// Fork a child process (wraps libc::fork)
 // slightly modified from Servo test example
 pub unsafe fn fork<F: FnOnce()>(child_func: F) -> Result<libc::pid_t, Error> {
-  match libc::fork() {
-    -1 => {
-      Err(Error::OS(format!("Fork failed: {:?}", io::Error::last_os_error())))
-    },
-    0 => {
-       child_func();
-       libc::exit(0);
-    },
-    pid => Ok(pid),
-  }
+	match libc::fork() {
+		-1 => Err(Error::OS(format!(
+			"Fork failed: {:?}",
+			io::Error::last_os_error()
+		))),
+		0 => {
+			child_func();
+			libc::exit(0);
+		}
+		pid => Ok(pid),
+	}
 }

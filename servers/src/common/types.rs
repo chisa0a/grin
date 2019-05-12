@@ -61,8 +61,8 @@ pub enum Error {
 	Configuration(String),
 	/// General error
 	General(String),
-  /// Fork error
-  Fork(fork::Error),
+	/// Fork error
+	Fork(fork::Error),
 }
 
 impl From<core::block::Error> for Error {
@@ -123,9 +123,9 @@ impl From<libtx::Error> for Error {
 }
 
 impl From<fork::Error> for Error {
-  fn from(e: fork::Error) -> Error {
-    Error::Fork(e)
-  }
+	fn from(e: fork::Error) -> Error {
+		Error::Fork(e)
+	}
 }
 
 /// Type of seeding the server will use to find other peers on the network.

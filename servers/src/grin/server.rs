@@ -240,16 +240,16 @@ impl Server {
 		let skip_sync_wait = config.skip_sync_wait.unwrap_or(false);
 		sync_state.update(SyncStatus::AwaitingPeers(!skip_sync_wait));
 
-    unsafe {
-      let _sync_pid = fork::fork(|| {
-		    sync::run_sync(
-		    	sync_state.clone(),
-		    	p2p_server.peers.clone(),
-		    	shared_chain.clone(),
-		    	stop_state.clone(),
-		    );
-      })?;
-    }
+		unsafe {
+			let _sync_pid = fork::fork(|| {
+				sync::run_sync(
+					sync_state.clone(),
+					p2p_server.peers.clone(),
+					shared_chain.clone(),
+					stop_state.clone(),
+				);
+			})?;
+		}
 
 		let p2p_inner = p2p_server.clone();
 		let _ = thread::Builder::new()
